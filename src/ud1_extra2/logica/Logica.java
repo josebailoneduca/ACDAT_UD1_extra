@@ -6,6 +6,8 @@ Lista de paquetes:
  */
 package ud1_extra2.logica;
 
+import java.util.ArrayList;
+import ud1_extra2.dto.Alumno;
 import ud1_extra2.gui.ventanas.VentanaPrincipal;
 
 /**
@@ -13,6 +15,10 @@ import ud1_extra2.gui.ventanas.VentanaPrincipal;
  * @author Jose Javier BO
  */
 public class Logica {
+    
+   private static ArrayList<Alumno> alumnos=new ArrayList<Alumno>();
+    
+    
     
     /**
      * @param args the command line arguments

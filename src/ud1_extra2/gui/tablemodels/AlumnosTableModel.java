@@ -69,10 +69,11 @@ public class AlumnosTableModel extends AbstractTableModel{
     public Class<?> getColumnClass(int columnIndex) {
         Class<?> value;
         switch (columnIndex) {
-            case 0 -> value = String.class;
+            case 0 -> value = Integer.class;
             case 1 -> value = String.class;
-            case 2 -> value = Long.class;
-            case 3 -> value = String.class;
+            case 2 -> value = String.class;
+            case 3 -> value = Integer.class;
+            case 4 -> value = Integer.class;
             default -> {
                 value = null;
                 throw new AssertionError();

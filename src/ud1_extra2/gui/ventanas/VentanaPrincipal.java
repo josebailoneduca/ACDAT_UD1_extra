@@ -57,12 +57,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/add.png"))); // NOI18N
-        btnAdd.setToolTipText("Crear");
+        btnAdd.setToolTipText("Alta");
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/delete.png"))); // NOI18N
-        btnDelete.setToolTipText("Eliminar seleccionado");
+        btnDelete.setToolTipText("Baja");
 
-        btnEdit.setToolTipText("Editar seleccionado");
+        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/edit.png"))); // NOI18N
+        btnEdit.setToolTipText("Modificar");
 
         lbFiltro.setText("Filtro:");
 
@@ -275,7 +276,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             .addComponent(scrollTabla)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pGeneralExportImport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
             .addComponent(pBotonera, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -283,7 +284,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pBotonera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
                 .addGap(10, 10, 10)
                 .addComponent(pGeneralExportImport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -298,42 +299,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void inputExportFormatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputExportFormatoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_inputExportFormatoActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VentanaPrincipal().setVisible(true);
-            }
-        });
-    }
+ 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
