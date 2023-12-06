@@ -8,12 +8,9 @@ package ud1_extra2.dto;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -21,11 +18,19 @@ import java.util.Date;
  * @author Jose Javier BO
  */
 public class Alumno implements Serializable{
+    public static final int RA_NOMBRE_TAMANO=30;
+    
     private int matricula;
     private String nombre;
-    long fechaNac;
-    int nota;
-
+    private long fechaNac;
+    private int nota;
+    
+    public Alumno(int matricula){
+        this.matricula = matricula;
+        this.nombre = "";
+        this.fechaNac = System.currentTimeMillis();
+        this.nota = 1;
+    }
     public Alumno(int matricula, String nombre, long fecha, int nota) {
         this.matricula = matricula;
         this.nombre = nombre;

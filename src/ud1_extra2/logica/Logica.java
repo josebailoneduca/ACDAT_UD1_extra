@@ -15,10 +15,15 @@ import ud1_extra2.gui.ventanas.VentanaPrincipal;
  * @author Jose Javier BO
  */
 public class Logica {
-    
+
+   private static int matriculaMasAlta=0;
+
+
+   
    private static ArrayList<Alumno> alumnos=new ArrayList<Alumno>();
     
     
+  
     
     /**
      * @param args the command line arguments
@@ -50,8 +55,27 @@ public class Logica {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VentanaPrincipal().setVisible(true);
+                VentanaPrincipal vp =  new VentanaPrincipal();
+                vp.setLocationRelativeTo(null);
+                vp.setVisible(true);
             }
         });
+    }
+
+    public static int getProximaMatricula() {
+        return matriculaMasAlta+1;
+    }
+
+    public static void agregar(Alumno alumno) {
+        alumnos.add(alumno);
+        matriculaMasAlta=alumno.getMatricula();
+    }
+
+    public static void editar(Alumno alumno) {
+         alumnos.set(alumnos.indexOf(alumno), alumno);
+    }
+
+     public static ArrayList<Alumno> getAlumnos() {
+        return alumnos;
     }
 }

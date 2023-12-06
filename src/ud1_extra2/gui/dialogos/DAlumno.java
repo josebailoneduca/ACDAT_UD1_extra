@@ -6,20 +6,41 @@ Lista de paquetes:
  */
 package ud1_extra2.gui.dialogos;
 
+import java.util.Date;
+import javax.swing.JOptionPane;
+import ud1_extra2.dto.Alumno;
+import ud1_extra2.logica.Logica;
+
 /**
  *
  * @author Jose Javier BO
  */
-public class Alumno extends javax.swing.JDialog {
-
+public class DAlumno extends javax.swing.JDialog {
+    public static final int AGREGAR=0;
+    public static final int EDITAR=1;
+    Alumno alumno;
+    int modo;
     /**
      * Creates new form Alumno
      */
-    public Alumno(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public DAlumno(java.awt.Frame parent, Alumno alumno, int modo) {
+        super(parent, true);
+        this.alumno=alumno;
         initComponents();
+        this.alumno=alumno;
+        this.modo=modo;
+        rellenar();
     }
 
+    
+    private void rellenar() {
+        inputMatricula.setText(""+alumno.getMatricula());
+        inputNombre.setText(alumno.getNombre());
+        if (alumno.getFechaNac()!=0)
+        inputFecha.setValue(new Date(alumno.getFechaNac()));
+        inputNota.setValue(alumno.getNota());
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,8 +59,9 @@ public class Alumno extends javax.swing.JDialog {
         lbFecha = new javax.swing.JLabel();
         inputFecha = new javax.swing.JSpinner();
         lbNota = new javax.swing.JLabel();
-        inputNota = new javax.swing.JTextField();
+        inputNota = new javax.swing.JSpinner();
         btnGuardar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -65,10 +87,14 @@ public class Alumno extends javax.swing.JDialog {
         lbFecha.setToolTipText("");
 
         inputFecha.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, new java.util.Date(), java.util.Calendar.DAY_OF_MONTH));
+        javax.swing.JSpinner.DateEditor timeEditor = new javax.swing.JSpinner.DateEditor(inputFecha, "dd/MM/yyyy");
+        inputFecha.setEditor(timeEditor);
 
         lbNota.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbNota.setText("Nota:");
         lbNota.setToolTipText("");
+
+        inputNota.setModel(new javax.swing.SpinnerNumberModel(1, 1, 14, 1));
 
         javax.swing.GroupLayout pCamposLayout = new javax.swing.GroupLayout(pCampos);
         pCampos.setLayout(pCamposLayout);
@@ -94,7 +120,7 @@ public class Alumno extends javax.swing.JDialog {
                         .addGroup(pCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(inputFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(inputNota))
-                        .addGap(0, 116, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pCamposLayout.setVerticalGroup(
@@ -113,30 +139,42 @@ public class Alumno extends javax.swing.JDialog {
                     .addComponent(lbFecha)
                     .addComponent(inputFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pCamposLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbNota)
                     .addComponent(inputNota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
+
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnGuardar)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbAccion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(pCampos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(lbAccion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pCampos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(82, 82, 82)
+                .addComponent(btnGuardar)
+                .addGap(53, 53, 53)
+                .addComponent(btnCancelar)
+                .addContainerGap(82, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,61 +184,54 @@ public class Alumno extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pCampos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnGuardar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGuardar)
+                    .addComponent(btnCancelar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Alumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Alumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Alumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Alumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                Alumno dialog = new Alumno(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        //recoger valores
+        String nombre=this.inputNombre.getText();
+        long fecha= ((Date)this.inputFecha.getValue()).getTime();
+        int nota= (int) this.inputNota.getValue();
+        //comprobar validez
+        if (nombre.length()<2){
+            JOptionPane.showMessageDialog(this.getParent(), "El nombre debe tener al menos 2 caracteres","Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (nombre.length()>Alumno.RA_NOMBRE_TAMANO){
+            JOptionPane.showMessageDialog(this.getParent(), "El nombre está limitado a "+Alumno.RA_NOMBRE_TAMANO+" caracteres","Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        alumno.setNombre(nombre);
+        alumno.setFechaNac(fecha);
+        alumno.setNota(nota);
+        //salvado
+        if (this.modo==DAlumno.AGREGAR)
+            Logica.agregar(alumno);
+        else
+           Logica.editar(alumno);
+        
+        this.dispose();
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JSpinner inputFecha;
     private javax.swing.JTextField inputMatricula;
     private javax.swing.JTextField inputNombre;
-    private javax.swing.JTextField inputNota;
+    private javax.swing.JSpinner inputNota;
     private javax.swing.JLabel lbAccion;
     private javax.swing.JLabel lbFecha;
     private javax.swing.JLabel lbMatricula;
@@ -208,4 +239,5 @@ public class Alumno extends javax.swing.JDialog {
     private javax.swing.JLabel lbNota;
     private javax.swing.JPanel pCampos;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -6,17 +6,31 @@ Lista de paquetes:
  */
 package ud1_extra2.gui.ventanas;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
+import javax.swing.table.TableRowSorter;
+import ud1_extra2.dto.Alumno;
+import ud1_extra2.gui.dialogos.DAlumno;
+import ud1_extra2.gui.tablemodels.AlumnosTableModel;
+import ud1_extra2.logica.Logica;
+
 /**
  *
  * @author Jose Javier BO
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
 
+    
+    TableRowSorter<AlumnosTableModel> rowSorter;
+    
     /**
      * Creates new form NewJFrame
      */
     public VentanaPrincipal() {
         initComponents();
+        inicializarTabla();
     }
 
     /**
@@ -29,6 +43,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         pBotonera = new javax.swing.JPanel();
+        btnAdd1 = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
@@ -56,8 +71,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        btnAdd1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/save.png"))); // NOI18N
+        btnAdd1.setToolTipText("Guardar");
+
         btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/add.png"))); // NOI18N
         btnAdd.setToolTipText("Alta");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/delete.png"))); // NOI18N
         btnDelete.setToolTipText("Baja");
@@ -76,20 +99,25 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pBotoneraLayout.setHorizontalGroup(
             pBotoneraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pBotoneraLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(18, 18, 18)
+                .addComponent(btnAdd1)
+                .addGap(30, 30, 30)
                 .addComponent(btnAdd)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDelete)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEdit)
-                .addGap(30, 30, 30)
-                .addComponent(lbFiltro)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(inputFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnQuitarFiltro)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(inputSelectFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pBotoneraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pBotoneraLayout.createSequentialGroup()
+                        .addGap(66, 66, 66)
+                        .addComponent(lbFiltro)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(inputFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnQuitarFiltro)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(inputSelectFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pBotoneraLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEdit)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pBotoneraLayout.setVerticalGroup(
@@ -103,10 +131,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(lbFiltro)
                         .addComponent(btnQuitarFiltro))
                     .addGroup(pBotoneraLayout.createSequentialGroup()
-                        .addGroup(pBotoneraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(pBotoneraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(btnEdit, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnDelete, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnAdd1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnAdd, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -284,7 +313,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pBotonera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
                 .addGap(10, 10, 10)
                 .addComponent(pGeneralExportImport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -299,10 +328,18 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void inputExportFormatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputExportFormatoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_inputExportFormatoActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        DAlumno dialogo=new DAlumno(this, new Alumno(Logica.getProximaMatricula()),DAlumno.AGREGAR);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setVisible(true);
+        ((AlumnosTableModel)tblAlumnos.getModel()).fireTableDataChanged();
+    }//GEN-LAST:event_btnAddActionPerformed
  
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnAdd1;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnExport;
@@ -328,4 +365,21 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollTabla;
     private javax.swing.JTable tblAlumnos;
     // End of variables declaration//GEN-END:variables
+
+    private void inicializarTabla() {
+        //EMPLEADOS ACTIVOS
+        AlumnosTableModel tm = new AlumnosTableModel(Logica.getAlumnos());
+        tblAlumnos.setModel(tm);
+        //seleccionable
+        tblAlumnos.setRowSelectionAllowed(true);
+
+        //sorter
+        rowSorter = new TableRowSorter<>(tm);
+        tblAlumnos.setRowSorter(rowSorter);
+
+        //ordenacion inicial
+        List<SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
+        rowSorter.setSortKeys(sortKeys);    
+    }
 }
