@@ -6,13 +6,18 @@ Lista de paquetes:
  */
 package ud1_extra2.gui.ventanas;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableRowSorter;
 import ud1_extra2.dto.Alumno;
 import ud1_extra2.gui.dialogos.DAlumno;
+import ud1_extra2.gui.dialogos.DSelectorArchivo;
 import ud1_extra2.gui.tablemodels.AlumnosTableModel;
 import ud1_extra2.logica.Logica;
 
@@ -22,14 +27,15 @@ import ud1_extra2.logica.Logica;
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
 
-    
     TableRowSorter<AlumnosTableModel> rowSorter;
-    
+    static final String rutaRecursos = "src/ud1_extra2/recursos";
+
     /**
      * Creates new form NewJFrame
      */
     public VentanaPrincipal() {
         initComponents();
+        this.setTitle(Logica.getTitulo());
         inicializarTabla();
     }
 
@@ -43,7 +49,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         pBotonera = new javax.swing.JPanel();
-        btnAdd1 = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
@@ -55,15 +61,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         tblAlumnos = new javax.swing.JTable();
         pGeneralExportImport = new javax.swing.JPanel();
         pImport = new javax.swing.JPanel();
-        lbImportFormato = new javax.swing.JLabel();
-        inputImportFormato = new javax.swing.JComboBox<>();
         lbImportFichero = new javax.swing.JLabel();
         inputImportRuta = new javax.swing.JTextField();
         btnImportRuta = new javax.swing.JButton();
         btnImport = new javax.swing.JButton();
         pExport = new javax.swing.JPanel();
-        lbExportFormato = new javax.swing.JLabel();
-        inputExportFormato = new javax.swing.JComboBox<>();
         lbExportFichero = new javax.swing.JLabel();
         inputExportRuta = new javax.swing.JTextField();
         btnExportRuta = new javax.swing.JButton();
@@ -71,8 +73,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnAdd1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/save.png"))); // NOI18N
-        btnAdd1.setToolTipText("Guardar");
+        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/save.png"))); // NOI18N
+        btnGuardar.setToolTipText("Guardar");
+        btnGuardar.setEnabled(false);
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/add.png"))); // NOI18N
         btnAdd.setToolTipText("Alta");
@@ -84,9 +92,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/delete.png"))); // NOI18N
         btnDelete.setToolTipText("Baja");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/edit.png"))); // NOI18N
         btnEdit.setToolTipText("Modificar");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
 
         lbFiltro.setText("Filtro:");
 
@@ -100,7 +118,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             pBotoneraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pBotoneraLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(btnAdd1)
+                .addComponent(btnGuardar)
                 .addGap(30, 30, 30)
                 .addComponent(btnAdd)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -134,7 +152,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addGroup(pBotoneraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(btnEdit, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnDelete, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAdd1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnGuardar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnAdd, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -156,43 +174,39 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pImport.setBorder(javax.swing.BorderFactory.createTitledBorder("Importar"));
         pImport.setMaximumSize(new java.awt.Dimension(1000, 32767));
 
-        lbImportFormato.setText("Formato:");
-
-        inputImportFormato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Texto (.txt)", "Binario (.bin)", "Objetos (.obj)", "Acceso Directo (.dat)" }));
-        inputImportFormato.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputImportFormatoActionPerformed(evt);
-            }
-        });
-
         lbImportFichero.setText("Fichero:");
+
+        inputImportRuta.setEditable(false);
 
         btnImportRuta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/open.png"))); // NOI18N
         btnImportRuta.setMaximumSize(new java.awt.Dimension(50, 50));
         btnImportRuta.setMinimumSize(new java.awt.Dimension(50, 50));
         btnImportRuta.setPreferredSize(new java.awt.Dimension(30, 30));
+        btnImportRuta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportRutaActionPerformed(evt);
+            }
+        });
 
         btnImport.setText("Importar");
         btnImport.setToolTipText("");
+        btnImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pImportLayout = new javax.swing.GroupLayout(pImport);
         pImport.setLayout(pImportLayout);
         pImportLayout.setHorizontalGroup(
             pImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pImportLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
+                .addComponent(lbImportFichero)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pImportLayout.createSequentialGroup()
-                        .addComponent(lbImportFormato)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inputImportFormato, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pImportLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(lbImportFichero)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnImport)
-                            .addComponent(inputImportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(btnImport)
+                    .addComponent(inputImportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -200,16 +214,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pImportLayout.setVerticalGroup(
             pImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pImportLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(pImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnImportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(pImportLayout.createSequentialGroup()
-                        .addGroup(pImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(inputImportFormato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbImportFormato))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbImportFichero)
-                            .addComponent(inputImportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(pImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbImportFichero)
+                        .addComponent(inputImportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addComponent(btnImport)
                 .addContainerGap())
@@ -218,43 +228,41 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pExport.setBorder(javax.swing.BorderFactory.createTitledBorder("Exportar"));
         pExport.setMaximumSize(new java.awt.Dimension(1000, 32767));
 
-        lbExportFormato.setText("Formato:");
-
-        inputExportFormato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Texto (.txt)", "Binario (.bin)", "Objetos (.obj)", "Acceso Directo (.dat)" }));
-        inputExportFormato.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputExportFormatoActionPerformed(evt);
-            }
-        });
-
         lbExportFichero.setText("Fichero:");
 
+        inputExportRuta.setEditable(false);
+
         btnExportRuta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra2/gui/imagenes/open.png"))); // NOI18N
+        btnExportRuta.setEnabled(false);
         btnExportRuta.setMaximumSize(new java.awt.Dimension(50, 50));
         btnExportRuta.setMinimumSize(new java.awt.Dimension(50, 50));
         btnExportRuta.setPreferredSize(new java.awt.Dimension(30, 30));
+        btnExportRuta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportRutaActionPerformed(evt);
+            }
+        });
 
         btnExport.setText("Exportar");
         btnExport.setToolTipText("");
+        btnExport.setEnabled(false);
+        btnExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pExportLayout = new javax.swing.GroupLayout(pExport);
         pExport.setLayout(pExportLayout);
         pExportLayout.setHorizontalGroup(
             pExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pExportLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
+                .addComponent(lbExportFichero)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pExportLayout.createSequentialGroup()
-                        .addComponent(lbExportFormato)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inputExportFormato, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pExportLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(lbExportFichero)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnExport)
-                            .addComponent(inputExportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(btnExport)
+                    .addComponent(inputExportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnExportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -262,16 +270,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pExportLayout.setVerticalGroup(
             pExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pExportLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(pExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnExportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(pExportLayout.createSequentialGroup()
-                        .addGroup(pExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(inputExportFormato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbExportFormato))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbExportFichero)
-                            .addComponent(inputExportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(pExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbExportFichero)
+                        .addComponent(inputExportRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnExport)
                 .addContainerGap())
@@ -313,7 +317,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pBotonera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
                 .addGap(10, 10, 10)
                 .addComponent(pGeneralExportImport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -321,43 +325,159 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void inputImportFormatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputImportFormatoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_inputImportFormatoActionPerformed
-
-    private void inputExportFormatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputExportFormatoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_inputExportFormatoActionPerformed
-
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        DAlumno dialogo=new DAlumno(this, new Alumno(Logica.getProximaMatricula()),DAlumno.AGREGAR);
+        DAlumno dialogo = new DAlumno(this, new Alumno(Logica.getProximaMatricula()), DAlumno.AGREGAR);
         dialogo.setLocationRelativeTo(this);
         dialogo.setVisible(true);
-        ((AlumnosTableModel)tblAlumnos.getModel()).fireTableDataChanged();
+        actualizarDatos();
     }//GEN-LAST:event_btnAddActionPerformed
- 
+
+    private void actualizarDatos() {
+        ((AlumnosTableModel) tblAlumnos.getModel()).fireTableDataChanged();
+        this.setTitle(Logica.getTitulo());
+        btnGuardar.setEnabled(Logica.hayCambios() && Logica.hayDatos());
+        btnExport.setEnabled(Logica.hayDatos());
+        btnExportRuta.setEnabled(Logica.hayDatos());
+    }
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        //detectar trabajo seleccionado
+        int indice = getIndiceAlumnoSeleccionado();
+        if (indice == -1)
+            mensajeAviso("Seleccione un alumno de la tabla");
+        else {
+
+            //recoger alumno
+            Alumno alumno = Logica.getAlumno(indice);
+            if (alumno == null) {
+                mensajeError("El alummno no existe");
+                return;
+            }
+            //abrir dialogo de edicion
+            DAlumno da = new DAlumno(this, alumno, DAlumno.EDITAR);
+            da.setLocationRelativeTo(this);
+            da.setVisible(true);
+            actualizarDatos();
+        }
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        //detectar trabajo seleccionado
+        int indice = getIndiceAlumnoSeleccionado();
+        if (indice == -1)
+            mensajeAviso("Seleccione un alumno de la tabla");
+        else {
+            if (Logica.deleteAlumno(indice)) {
+                mensajeInfo("Alumno eliminiado");
+                actualizarDatos();
+            } else {
+                mensajeError("El alummno no existe");
+            }
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        int resultado = Logica.guardar();
+        switch (resultado) {
+            case Logica.GUARDADO -> {
+                mensajeInfo("Datos guardados");
+                actualizarDatos();
+            }
+            case Logica.ERROR -> {
+                mensajeError("No se pudo guardar");
+            }
+            default -> {
+            }
+        }
+
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
+        String ruta = inputImportRuta.getText();
+        if (ruta.length() == 0) {
+            mensajeAviso("PreviamenteDebe seleccionar el archivo a cargar");
+            return;
+        }
+        File seleccionado = new File(ruta);
+
+        //si no hay cambios o confirma
+        if (!Logica.hayCambios() || confirmacion("Se perderan los datos no guardados ¿Desea continuar?")) {
+            Logica.importar(seleccionado);
+            actualizarDatos();
+        }
+    }//GEN-LAST:event_btnImportActionPerformed
+
+    private void btnImportRutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportRutaActionPerformed
+        DSelectorArchivo sa = new DSelectorArchivo(this, new File(rutaRecursos).getAbsolutePath());
+        sa.setLocationRelativeTo(this);
+        sa.setVisible(true);
+        File seleccionado = sa.getSeleccionado();
+        if (seleccionado == null) {
+            return;
+        }
+
+        inputImportRuta.setText(seleccionado.getAbsolutePath());
+    }//GEN-LAST:event_btnImportRutaActionPerformed
+
+    private void btnExportRutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportRutaActionPerformed
+        File seleccionado = abrirSelectorDestino("Seleccione el archivo al que exportar");
+        if (seleccionado != null)
+            inputExportRuta.setText(seleccionado.getAbsolutePath());
+    }//GEN-LAST:event_btnExportRutaActionPerformed
+
+    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
+        String ruta = inputExportRuta.getText();
+        if (ruta.length() == 0) {
+            mensajeAviso("PreviamenteDebe seleccionar el archivo al que exportar");
+            return;
+        }
+        File seleccionado = new File(ruta);
+        int resultado = Logica.exportar(seleccionado);
+        switch (resultado) {
+            case Logica.GUARDADO -> {
+                mensajeInfo("Datos exportados a "+seleccionado.getAbsolutePath());
+                actualizarDatos();
+            }
+            case Logica.ERROR -> {
+                mensajeError("No se pudo guardar a "+seleccionado.getAbsolutePath());
+            }
+            default -> {
+            }
+        }
+    }//GEN-LAST:event_btnExportActionPerformed
+    /**
+     * Devuelve el indice en el array de alumnos del alumno seleccionado en la
+     * tabla
+     *
+     * @return la id del alumno o -1 si no hay seleccionados
+     */
+    private int getIndiceAlumnoSeleccionado() {
+        int seleccionado = tblAlumnos.getSelectedRow();
+        if (seleccionado < 0) {
+            return -1;
+        }
+        //extraer indice de alumno en el array
+        return tblAlumnos.convertRowIndexToModel(seleccionado);
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
-    private javax.swing.JButton btnAdd1;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnExportRuta;
+    private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnImport;
     private javax.swing.JButton btnImportRuta;
     private javax.swing.JButton btnQuitarFiltro;
-    private javax.swing.JComboBox<String> inputExportFormato;
     private javax.swing.JTextField inputExportRuta;
     private javax.swing.JTextField inputFiltro;
-    private javax.swing.JComboBox<String> inputImportFormato;
     private javax.swing.JTextField inputImportRuta;
     private javax.swing.JComboBox<String> inputSelectFiltro;
     private javax.swing.JLabel lbExportFichero;
-    private javax.swing.JLabel lbExportFormato;
     private javax.swing.JLabel lbFiltro;
     private javax.swing.JLabel lbImportFichero;
-    private javax.swing.JLabel lbImportFormato;
     private javax.swing.JPanel pBotonera;
     private javax.swing.JPanel pExport;
     private javax.swing.JPanel pGeneralExportImport;
@@ -380,6 +500,72 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         //ordenacion inicial
         List<SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
-        rowSorter.setSortKeys(sortKeys);    
+        rowSorter.setSortKeys(sortKeys);
+    }
+
+    public File abrirSelectorDestino(String titulo) {
+        //configurar selector
+        JFileChooser fc = new JFileChooser(new File(rutaRecursos));
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Texto(.txt)", "txt"));
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Binario(.bin)", "bin"));
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Objeto(.obj)", "obj"));
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Acceso Aleatorio(.dat)", "dat"));
+        fc.setDialogTitle(titulo);
+
+        //pedir hasta que se haya elegido uno o cancelado
+        while (true) {
+            int resultado = fc.showSaveDialog(this);
+            if (resultado == JFileChooser.APPROVE_OPTION) {
+                //comprobar extension
+                File archivo = fc.getSelectedFile();
+                FileNameExtensionFilter ff = (FileNameExtensionFilter) fc.getFileFilter();
+                if (!ff.accept(archivo)) {
+                    archivo = new File(archivo.getAbsolutePath() + "." + ff.getExtensions()[0]);
+                }
+                //si el archivo existe preguntamos confirmacion de sobreescritura
+                if (archivo.exists() && confirmacion("El archivo existe. ¿Desea sobreescribirlo?")) {
+                    return archivo;
+                    //si no existe se devuelve directamente el archivo
+                } else {
+                    return archivo;
+                }
+                //si no ha elegido nada devuelve null    
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Muestra un mensaje de error
+     *
+     * @param msg El mensaje
+     */
+    private void mensajeError(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Muestra un mensaje de aviso
+     *
+     * @param msg El mensaje
+     */
+    private void mensajeAviso(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Aviso", JOptionPane.WARNING_MESSAGE);
+    }
+
+    /**
+     * Muestra un mensaje informativo
+     *
+     * @param msg El mensaje
+     */
+    private void mensajeInfo(String msg) {
+
+        JOptionPane.showMessageDialog(this, msg, "", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    private boolean confirmacion(String msg) {
+        return JOptionPane.showConfirmDialog(this, msg, "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
 }

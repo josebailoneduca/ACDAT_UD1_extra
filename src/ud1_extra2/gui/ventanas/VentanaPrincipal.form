@@ -36,7 +36,7 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="pBotonera" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="scrollTabla" pref="147" max="32767" attributes="0"/>
+              <Component id="scrollTabla" pref="167" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Component id="pGeneralExportImport" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -51,7 +51,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                  <Component id="btnAdd1" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnGuardar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                   <Component id="btnAdd" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -91,7 +91,7 @@
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
                               <Component id="btnEdit" alignment="0" max="32767" attributes="0"/>
                               <Component id="btnDelete" alignment="0" max="32767" attributes="0"/>
-                              <Component id="btnAdd1" alignment="0" max="32767" attributes="0"/>
+                              <Component id="btnGuardar" alignment="0" max="32767" attributes="0"/>
                               <Component id="btnAdd" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -103,13 +103,17 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="btnAdd1">
+        <Component class="javax.swing.JButton" name="btnGuardar">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/ud1_extra2/gui/imagenes/save.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Guardar"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGuardarActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnAdd">
           <Properties>
@@ -129,6 +133,9 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Baja"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnEdit">
           <Properties>
@@ -137,6 +144,9 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Modificar"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lbFiltro">
           <Properties>
@@ -230,22 +240,12 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      <Component id="lbImportFichero" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="lbImportFormato" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="inputImportFormato" min="-2" pref="128" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                              <Component id="lbImportFichero" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="btnImport" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="inputImportRuta" alignment="0" min="-2" pref="461" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="btnImport" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="inputImportRuta" alignment="0" min="-2" pref="461" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnImportRuta" min="-2" max="-2" attributes="0"/>
@@ -256,18 +256,12 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="btnImportRuta" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="inputImportFormato" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="lbImportFormato" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="lbImportFichero" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="inputImportRuta" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                              <Component id="lbImportFichero" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="inputImportRuta" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace pref="9" max="32767" attributes="0"/>
@@ -278,35 +272,15 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="lbImportFormato">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Formato:"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="inputImportFormato">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="Texto (.txt)"/>
-                    <StringItem index="1" value="Binario (.bin)"/>
-                    <StringItem index="2" value="Objetos (.obj)"/>
-                    <StringItem index="3" value="Acceso Directo (.dat)"/>
-                  </StringArray>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inputImportFormatoActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-              </AuxValues>
-            </Component>
             <Component class="javax.swing.JLabel" name="lbImportFichero">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fichero:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="inputImportRuta">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="btnImportRuta">
               <Properties>
@@ -323,12 +297,18 @@
                   <Dimension value="[30, 30]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnImportRutaActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnImport">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Importar"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnImportActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -348,22 +328,12 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      <Component id="lbExportFichero" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="lbExportFormato" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="inputExportFormato" min="-2" pref="128" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                              <Component id="lbExportFichero" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="btnExport" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="inputExportRuta" alignment="0" min="-2" pref="461" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="btnExport" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="inputExportRuta" alignment="0" min="-2" pref="461" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnExportRuta" min="-2" max="-2" attributes="0"/>
@@ -374,18 +344,12 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="btnExportRuta" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="inputExportFormato" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="lbExportFormato" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="lbExportFichero" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="inputExportRuta" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                              <Component id="lbExportFichero" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="inputExportRuta" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -396,41 +360,22 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="lbExportFormato">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Formato:"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="inputExportFormato">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="Texto (.txt)"/>
-                    <StringItem index="1" value="Binario (.bin)"/>
-                    <StringItem index="2" value="Objetos (.obj)"/>
-                    <StringItem index="3" value="Acceso Directo (.dat)"/>
-                  </StringArray>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inputExportFormatoActionPerformed"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-              </AuxValues>
-            </Component>
             <Component class="javax.swing.JLabel" name="lbExportFichero">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fichero:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="inputExportRuta">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="btnExportRuta">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/ud1_extra2/gui/imagenes/open.png"/>
                 </Property>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[50, 50]"/>
                 </Property>
@@ -441,12 +386,19 @@
                   <Dimension value="[30, 30]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExportRutaActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnExport">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Exportar"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExportActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

@@ -60,7 +60,7 @@ public class DAlumno extends javax.swing.JDialog {
         inputFecha = new javax.swing.JSpinner();
         lbNota = new javax.swing.JLabel();
         inputNota = new javax.swing.JSpinner();
-        btnGuardar = new javax.swing.JButton();
+        btnAceptar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -145,10 +145,10 @@ public class DAlumno extends javax.swing.JDialog {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        btnGuardar.setText("Guardar");
-        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+        btnAceptar.setText("Aceptar");
+        btnAceptar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardarActionPerformed(evt);
+                btnAceptarActionPerformed(evt);
             }
         });
 
@@ -171,7 +171,7 @@ public class DAlumno extends javax.swing.JDialog {
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(82, 82, 82)
-                .addComponent(btnGuardar)
+                .addComponent(btnAceptar)
                 .addGap(53, 53, 53)
                 .addComponent(btnCancelar)
                 .addContainerGap(82, Short.MAX_VALUE))
@@ -185,7 +185,7 @@ public class DAlumno extends javax.swing.JDialog {
                 .addComponent(pCampos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnGuardar)
+                    .addComponent(btnAceptar)
                     .addComponent(btnCancelar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -197,7 +197,7 @@ public class DAlumno extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+    private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
         //recoger valores
         String nombre=this.inputNombre.getText();
         long fecha= ((Date)this.inputFecha.getValue()).getTime();
@@ -221,13 +221,13 @@ public class DAlumno extends javax.swing.JDialog {
            Logica.editar(alumno);
         
         this.dispose();
-    }//GEN-LAST:event_btnGuardarActionPerformed
+    }//GEN-LAST:event_btnAceptarActionPerformed
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAceptar;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnGuardar;
     private javax.swing.JSpinner inputFecha;
     private javax.swing.JTextField inputMatricula;
     private javax.swing.JTextField inputNombre;
