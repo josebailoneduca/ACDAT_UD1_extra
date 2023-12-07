@@ -6,10 +6,9 @@ Lista de paquetes:
  */
 package ud1_extra2.dto;
 
-import ud1_extra1.dto.*;
 
 /**
- *
+ * DTO de archivo
  * @author Jose Javier BO
  */
 public class Archivo {

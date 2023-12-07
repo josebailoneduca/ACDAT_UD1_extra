@@ -4,7 +4,7 @@ LICENCIA JOSE JAVIER BO
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
 Lista de paquetes:
  */
-package ud1_extra2.logica;
+package ud1_extra2.logica.operaciones;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,7 +13,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.StringTokenizer;
 import ud1_extra2.dto.Alumno;
 
@@ -21,11 +24,16 @@ import ud1_extra2.dto.Alumno;
  *
  * @author Jose Javier Bailon Ortiz
  */
-public class IOTexto implements IODatosInterface<Alumno> {
+public class IOTexto implements IOArchivoInterface<Alumno> {
 
+    /**
+     *
+     * @param archivo
+     * @return
+     */
     @Override
     public ArrayList<Alumno> cargar(File archivo) {
-        ArrayList<Alumno> salida = new ArrayList<Alumno>();
+        ArrayList<Alumno> salida = new ArrayList<>();
 
         //1- preparacion readers
         FileReader fr = null;
@@ -37,6 +45,9 @@ public class IOTexto implements IODatosInterface<Alumno> {
 
             //2- lectura
             while ((linea = br.readLine()) != null) {
+                Alumno alumno = textoToAlumno(linea);
+                if (alumno==null)
+                    return null;
                 salida.add(textoToAlumno(linea));
             }
 
@@ -63,6 +74,12 @@ public class IOTexto implements IODatosInterface<Alumno> {
         return salida;
     }
 
+    /**
+     *
+     * @param alumnos
+     * @param archivo
+     * @return
+     */
     @Override
     public boolean guardar(ArrayList<Alumno> alumnos, File archivo) {
 
@@ -71,7 +88,7 @@ public class IOTexto implements IODatosInterface<Alumno> {
         BufferedWriter bw = null;
         try {
             //2- preparar lineas
-            ArrayList<String> lineas = new ArrayList<String>();
+            ArrayList<String> lineas = new ArrayList<>();
             for (Alumno alumno : alumnos) {
                 lineas.add(alumnoToTexto(alumno));
             }
@@ -111,7 +128,7 @@ public class IOTexto implements IODatosInterface<Alumno> {
         String salida = "";
         salida += alumno.getMatricula() + ";";
         salida += alumno.getNombre() + ";";
-        salida += alumno.getFechaNac() + ";";
+        salida += new SimpleDateFormat("dd/MM/yyy").format(new Date(alumno.getFechaNac()))+ ";";
         salida += alumno.getNota() + ";";
         return salida;
     }
@@ -120,7 +137,12 @@ public class IOTexto implements IODatosInterface<Alumno> {
         StringTokenizer st = new StringTokenizer(linea, ";");
         int matricula = Integer.parseInt(st.nextToken());
         String nombre = st.nextToken();
-        long fecha = Long.parseLong(st.nextToken());
+        long fecha;
+        try {
+            fecha = new SimpleDateFormat("dd/MM/yyy").parse(st.nextToken()).getTime();
+        } catch (ParseException ex) {
+            return null;
+        }
         int nota = Integer.parseInt(st.nextToken());
         return new Alumno(matricula, nombre, fecha, nota);
     }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -22,21 +23,164 @@ import ud1_extra2.gui.tablemodels.AlumnosTableModel;
 import ud1_extra2.logica.Logica;
 
 /**
+ * Ventana principal de la aplicación
  *
  * @author Jose Javier BO
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
 
+    //sorter de la tabla de alumnos
     TableRowSorter<AlumnosTableModel> rowSorter;
-    static final String rutaRecursos = "src/ud1_extra2/recursos";
+
+    //Ruta por defecto para dialogos de archivos
+    static final String RUTA_RECURSOS = "src/ud1_extra2/recursos";
 
     /**
      * Creates new form NewJFrame
      */
     public VentanaPrincipal() {
         initComponents();
-        this.setTitle(Logica.getTitulo());
+        //inicializar tabla
         inicializarTabla();
+        //actualizar estado de botones y contenido de la tabla
+        actualizarDatos();
+    }
+    /**
+     * Inicializa la tabla asignandole modelo y sorter
+     */
+    private void inicializarTabla() {
+        //EMPLEADOS ACTIVOS
+        AlumnosTableModel tm = new AlumnosTableModel(Logica.getAlumnos());
+        tblAlumnos.setModel(tm);
+        //seleccionable
+        tblAlumnos.setRowSelectionAllowed(true);
+
+        //sorter
+        rowSorter = new TableRowSorter<>(tm);
+        tblAlumnos.setRowSorter(rowSorter);
+
+        //ordenacion inicial
+        List<SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
+        rowSorter.setSortKeys(sortKeys);
+    }
+    
+    
+    /**
+     * Actualiza el estado de botones y contenido de la tabla en funcion de si
+     * hay cambios en los datos o de si hay datos
+     */
+    private void actualizarDatos() {
+        ((AlumnosTableModel) tblAlumnos.getModel()).fireTableDataChanged();
+        this.setTitle(Logica.getTitulo());
+        btnGuardar.setEnabled(Logica.hayCambios());
+        btnExport.setEnabled(Logica.hayDatos());
+        btnExportRuta.setEnabled(Logica.hayDatos());
+    }
+
+    
+    
+    /**
+     * Devuelve el indice del alumno seleccionado en el array de alumnos
+     *
+     * @return la indice del alumno o -1 si no hay seleccionados
+     */
+    private int getIndiceAlumnoSeleccionado() {
+        int seleccionado = tblAlumnos.getSelectedRow();
+        if (seleccionado < 0) {
+            return -1;
+        }
+        //extraer indice de alumno en el array
+        return tblAlumnos.convertRowIndexToModel(seleccionado);
+    }
+
+
+    /**
+     * Abre el selector de archivo para guardados
+     * @param titulo Titulo a mostrar
+     * @return el archivo seleccionado como ruta de guardado o null si no se ha seleccionado
+     */
+    public File abrirSelectorDestino(String titulo) {
+        //configurar selector
+        JFileChooser fc = new JFileChooser(new File(RUTA_RECURSOS));
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Texto(.txt)", "txt"));
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Binario(.bin)", "bin"));
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Objeto(.obj)", "obj"));
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Acceso Aleatorio(.dat)", "dat"));
+        fc.setDialogTitle(titulo);
+
+        //pedir hasta que se haya elegido uno o cancelado
+        while (true) {
+            int resultado = fc.showSaveDialog(this);
+            if (resultado == JFileChooser.APPROVE_OPTION) {
+                //comprobar extension
+                File archivo = fc.getSelectedFile();
+                FileNameExtensionFilter ff = (FileNameExtensionFilter) fc.getFileFilter();
+                if (!ff.accept(archivo)) {
+                    archivo = new File(archivo.getAbsolutePath() + "." + ff.getExtensions()[0]);
+                }
+                //si el archivo existe preguntamos confirmacion de sobreescritura
+                if (archivo.exists() && confirmacion("El archivo existe. ¿Desea sobreescribirlo?")) {
+                    return archivo;
+                    //si no existe se devuelve directamente el archivo
+                } else {
+                    return archivo;
+                }
+                //si no ha elegido nada devuelve null    
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Muestra un mensaje de error
+     *
+     * @param msg El mensaje
+     */
+    private void mensajeError(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Muestra un mensaje de aviso
+     *
+     * @param msg El mensaje
+     */
+    private void mensajeAviso(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Aviso", JOptionPane.WARNING_MESSAGE);
+    }
+
+    /**
+     * Muestra un mensaje informativo
+     *
+     * @param msg El mensaje
+     */
+    private void mensajeInfo(String msg) {
+
+        JOptionPane.showMessageDialog(this, msg, "", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
+     * Muestra un mensaje para confirmación
+     * @param msg El mensaje a mostrar
+     * @return  True si ha elegido SI y False en cualquier otro caso.
+     */
+    private boolean confirmacion(String msg) {
+        return JOptionPane.showConfirmDialog(this, msg, "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+    }
+
+    
+    /**
+     * Filtra el contenido de la tabla de alumnos segun el filtro elegido
+     */
+    private void filtrar() {
+        //el indice del combobox de seleccion de tipo de filtro coincide con el indice de
+        //la columna por la que se debe filtrar
+        int indiceFiltro = inputSelectFiltro.getSelectedIndex();
+        RowFilter<AlumnosTableModel, Integer> rf = RowFilter.regexFilter(inputFiltro.getText(), indiceFiltro);
+        rowSorter.setRowFilter(rf);
     }
 
     /**
@@ -108,9 +252,25 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         lbFiltro.setText("Filtro:");
 
+        inputFiltro.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inputFiltroKeyReleased(evt);
+            }
+        });
+
         btnQuitarFiltro.setText("X");
+        btnQuitarFiltro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnQuitarFiltroActionPerformed(evt);
+            }
+        });
 
         inputSelectFiltro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Matricula", "Nombre" }));
+        inputSelectFiltro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputSelectFiltroActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pBotoneraLayout = new javax.swing.GroupLayout(pBotonera);
         pBotonera.setLayout(pBotoneraLayout);
@@ -325,6 +485,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Evento del boton de alta.
+     * Crea un nuevo alumno vacio con la proxima matricula y lanza el dialogo de 
+     * edicion de Alumno en modo AGREGAR
+     * @param evt 
+     */
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         DAlumno dialogo = new DAlumno(this, new Alumno(Logica.getProximaMatricula()), DAlumno.AGREGAR);
         dialogo.setLocationRelativeTo(this);
@@ -332,14 +498,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         actualizarDatos();
     }//GEN-LAST:event_btnAddActionPerformed
 
-    private void actualizarDatos() {
-        ((AlumnosTableModel) tblAlumnos.getModel()).fireTableDataChanged();
-        this.setTitle(Logica.getTitulo());
-        btnGuardar.setEnabled(Logica.hayCambios() && Logica.hayDatos());
-        btnExport.setEnabled(Logica.hayDatos());
-        btnExportRuta.setEnabled(Logica.hayDatos());
-    }
-
+    /**
+     * Evento del boton de edicion.
+     * Obtiene el alumno seleccionado y abre el dialogo de edicion en modo EDITAR
+     * @param evt 
+     */
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         //detectar trabajo seleccionado
         int indice = getIndiceAlumnoSeleccionado();
@@ -361,6 +524,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnEditActionPerformed
 
+    
+    /**
+     * Evento del boton de eliminar
+     * Elimina el alumno seleccionado en la tabla
+     * @param evt 
+     */
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         //detectar trabajo seleccionado
         int indice = getIndiceAlumnoSeleccionado();
@@ -376,6 +545,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
+    /**
+     * Evento del boton guardar.
+     * Pide a lógica guardar el estado en memoria al archivo actual. 
+     * @param evt 
+     */
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         int resultado = Logica.guardar();
         switch (resultado) {
@@ -392,6 +566,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnGuardarActionPerformed
 
+    /**
+     * Evento del boton de importar. Lanza la importación usando la ruta
+     * que hay actualmente en el campo de ruta de importar
+     * @param evt 
+     */
     private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
         String ruta = inputImportRuta.getText();
         if (ruta.length() == 0) {
@@ -402,29 +581,49 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         //si no hay cambios o confirma
         if (!Logica.hayCambios() || confirmacion("Se perderan los datos no guardados ¿Desea continuar?")) {
-            Logica.importar(seleccionado);
-            actualizarDatos();
+            if (Logica.importar(seleccionado) == Logica.CARGADO) {
+                mensajeInfo("Archivo importado");
+                actualizarDatos();
+            } else {
+                mensajeError("Error cargando " + ruta);
+            }
         }
     }//GEN-LAST:event_btnImportActionPerformed
 
+    /**
+     * Evento de seleccion de ruta de importacion.
+     * Muestra un dialogo DSelectorArchivo y guarda la ruta del archivo
+     * seleccionado en el ampo de ruta de importar
+     * @param evt 
+     */
     private void btnImportRutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportRutaActionPerformed
-        DSelectorArchivo sa = new DSelectorArchivo(this, new File(rutaRecursos).getAbsolutePath());
+        DSelectorArchivo sa = new DSelectorArchivo(this, new File(RUTA_RECURSOS).getAbsolutePath());
         sa.setLocationRelativeTo(this);
         sa.setVisible(true);
         File seleccionado = sa.getSeleccionado();
-        if (seleccionado == null) {
+        if (seleccionado == null) 
             return;
-        }
-
+        
         inputImportRuta.setText(seleccionado.getAbsolutePath());
     }//GEN-LAST:event_btnImportRutaActionPerformed
 
+    /**
+     * Evento de seleccion de ruta de exportacion.
+     * Muestra un dialogo JFileChooser y guarda la ruta del archivo
+     * seleccionado en el campo de ruta de exportar
+     * @param evt 
+     */
     private void btnExportRutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportRutaActionPerformed
         File seleccionado = abrirSelectorDestino("Seleccione el archivo al que exportar");
         if (seleccionado != null)
             inputExportRuta.setText(seleccionado.getAbsolutePath());
     }//GEN-LAST:event_btnExportRutaActionPerformed
 
+    /**
+     * Evento del boton de exportar.
+     * Lanza la exportacion con la ruta almacenada en el campo de ruta de exportar
+     * @param evt 
+     */
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
         String ruta = inputExportRuta.getText();
         if (ruta.length() == 0) {
@@ -435,31 +634,44 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         int resultado = Logica.exportar(seleccionado);
         switch (resultado) {
             case Logica.GUARDADO -> {
-                mensajeInfo("Datos exportados a "+seleccionado.getAbsolutePath());
+                mensajeInfo("Datos exportados a " + seleccionado.getAbsolutePath());
                 actualizarDatos();
             }
             case Logica.ERROR -> {
-                mensajeError("No se pudo guardar a "+seleccionado.getAbsolutePath());
+                mensajeError("No se pudo guardar a " + seleccionado.getAbsolutePath());
             }
             default -> {
             }
         }
     }//GEN-LAST:event_btnExportActionPerformed
-    /**
-     * Devuelve el indice en el array de alumnos del alumno seleccionado en la
-     * tabla
-     *
-     * @return la id del alumno o -1 si no hay seleccionados
-     */
-    private int getIndiceAlumnoSeleccionado() {
-        int seleccionado = tblAlumnos.getSelectedRow();
-        if (seleccionado < 0) {
-            return -1;
-        }
-        //extraer indice de alumno en el array
-        return tblAlumnos.convertRowIndexToModel(seleccionado);
 
-    }
+    /**
+     * Evento de pulsacion de tecla en el campo de filtro.
+     * Lanza el filtrado de la tabla de alumnos
+     * @param evt 
+     */
+    private void inputFiltroKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputFiltroKeyReleased
+        filtrar();
+    }//GEN-LAST:event_inputFiltroKeyReleased
+
+    /**
+     * Evento de cambio de tipo de filtro 
+     * Lanza el filtrado de la tabla de alumnos
+     * @param evt 
+     */
+    private void inputSelectFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputSelectFiltroActionPerformed
+        filtrar();
+    }//GEN-LAST:event_inputSelectFiltroActionPerformed
+
+    /**
+     * Evento de limpieza de campo de filtro. Limpia el campo de filtrado
+     * @param evt 
+     */
+    private void btnQuitarFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitarFiltroActionPerformed
+        inputFiltro.setText("");
+        filtrar();
+    }//GEN-LAST:event_btnQuitarFiltroActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
@@ -486,86 +698,4 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTable tblAlumnos;
     // End of variables declaration//GEN-END:variables
 
-    private void inicializarTabla() {
-        //EMPLEADOS ACTIVOS
-        AlumnosTableModel tm = new AlumnosTableModel(Logica.getAlumnos());
-        tblAlumnos.setModel(tm);
-        //seleccionable
-        tblAlumnos.setRowSelectionAllowed(true);
-
-        //sorter
-        rowSorter = new TableRowSorter<>(tm);
-        tblAlumnos.setRowSorter(rowSorter);
-
-        //ordenacion inicial
-        List<SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
-        rowSorter.setSortKeys(sortKeys);
-    }
-
-    public File abrirSelectorDestino(String titulo) {
-        //configurar selector
-        JFileChooser fc = new JFileChooser(new File(rutaRecursos));
-        fc.setAcceptAllFileFilterUsed(false);
-        fc.addChoosableFileFilter(new FileNameExtensionFilter("Texto(.txt)", "txt"));
-        fc.addChoosableFileFilter(new FileNameExtensionFilter("Binario(.bin)", "bin"));
-        fc.addChoosableFileFilter(new FileNameExtensionFilter("Objeto(.obj)", "obj"));
-        fc.addChoosableFileFilter(new FileNameExtensionFilter("Acceso Aleatorio(.dat)", "dat"));
-        fc.setDialogTitle(titulo);
-
-        //pedir hasta que se haya elegido uno o cancelado
-        while (true) {
-            int resultado = fc.showSaveDialog(this);
-            if (resultado == JFileChooser.APPROVE_OPTION) {
-                //comprobar extension
-                File archivo = fc.getSelectedFile();
-                FileNameExtensionFilter ff = (FileNameExtensionFilter) fc.getFileFilter();
-                if (!ff.accept(archivo)) {
-                    archivo = new File(archivo.getAbsolutePath() + "." + ff.getExtensions()[0]);
-                }
-                //si el archivo existe preguntamos confirmacion de sobreescritura
-                if (archivo.exists() && confirmacion("El archivo existe. ¿Desea sobreescribirlo?")) {
-                    return archivo;
-                    //si no existe se devuelve directamente el archivo
-                } else {
-                    return archivo;
-                }
-                //si no ha elegido nada devuelve null    
-            } else {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * Muestra un mensaje de error
-     *
-     * @param msg El mensaje
-     */
-    private void mensajeError(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
-     * Muestra un mensaje de aviso
-     *
-     * @param msg El mensaje
-     */
-    private void mensajeAviso(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Aviso", JOptionPane.WARNING_MESSAGE);
-    }
-
-    /**
-     * Muestra un mensaje informativo
-     *
-     * @param msg El mensaje
-     */
-    private void mensajeInfo(String msg) {
-
-        JOptionPane.showMessageDialog(this, msg, "", JOptionPane.PLAIN_MESSAGE);
-    }
-
-    private boolean confirmacion(String msg) {
-        return JOptionPane.showConfirmDialog(this, msg, "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
-    }
 }

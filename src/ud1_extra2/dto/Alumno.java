@@ -14,23 +14,27 @@ import java.time.ZoneId;
 import java.util.Date;
 
 /**
+ * DTO de alumno
  *
  * @author Jose Javier BO
  */
-public class Alumno implements Serializable{
-    public static final int RA_NOMBRE_TAMANO=30;
-    
+public class Alumno implements Serializable {
+
+    //limite de nombre a usar para la escritura del formato de acceso aleatorio
+    public static final int RA_NOMBRE_TAMANO = 50;
+
     private int matricula;
     private String nombre;
     private long fechaNac;
     private int nota;
-    
-    public Alumno(int matricula){
+
+    public Alumno(int matricula) {
         this.matricula = matricula;
         this.nombre = "";
         this.fechaNac = System.currentTimeMillis();
         this.nota = 1;
     }
+
     public Alumno(int matricula, String nombre, long fecha, int nota) {
         this.matricula = matricula;
         this.nombre = nombre;
@@ -69,19 +73,26 @@ public class Alumno implements Serializable{
     public void setNota(int nota) {
         this.nota = nota;
     }
-    
-    public String getFechaNacStr(){
-        SimpleDateFormat sdf = new  SimpleDateFormat("dd/MM/YYY");
+
+    /**
+     * Devuelve la fecha de nacimeinto en formato string
+     * @return La fecha en formato dd/MM/yyyy
+     */
+    public String getFechaNacStr() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(fechaNac);
     }
-    
-    public int getEdad(){
-        Date fnac=new Date(fechaNac);
-        Date ahora=new Date();
-        LocalDate fnacLD=LocalDate.ofInstant(fnac.toInstant(), ZoneId.systemDefault());
-        LocalDate ahoraLD=LocalDate.ofInstant(ahora.toInstant(), ZoneId.systemDefault());
-        
+
+    /**
+     * Calcula la edad a partir de la fecha de nacimiento
+     * @return
+     */
+    public int getEdad() {
+        Date fnac = new Date(fechaNac);
+        Date ahora = new Date();
+        LocalDate fnacLD = LocalDate.ofInstant(fnac.toInstant(), ZoneId.systemDefault());
+        LocalDate ahoraLD = LocalDate.ofInstant(ahora.toInstant(), ZoneId.systemDefault());
         Period diff = Period.between(fnacLD, ahoraLD);
-       return diff.getYears();
+        return diff.getYears();
     }
 }

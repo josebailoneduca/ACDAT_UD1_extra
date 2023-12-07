@@ -11,7 +11,7 @@ import javax.swing.table.AbstractTableModel;
 import ud1_extra2.dto.Alumno;
 
 /**
- * Table model para tablas que muestren archivos
+ * Table model para tablas que muestren alumnos
  * @author Jose Javier BO
  */
 public class AlumnosTableModel extends AbstractTableModel{
@@ -19,7 +19,7 @@ public class AlumnosTableModel extends AbstractTableModel{
     
 
     //ATRIBUTOS:
-    private final List<Alumno> listaAlumnos;//lista actual de archivos
+    private final List<Alumno> listaAlumnos;//lista actual de alumnos
     private final String[] columnas = new String[]{"Matricula", "Nombre alumno", "Fecha Nacimiento", "Nota Media", "Edad"};
 
     //METODOS:

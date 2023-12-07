@@ -7,7 +7,6 @@ Lista de paquetes:
 
 package ud1_extra2.logica.selectorarchivo;
 
-import ud1_extra1.logica.*;
 import java.io.File;
 import java.io.FilenameFilter;
 

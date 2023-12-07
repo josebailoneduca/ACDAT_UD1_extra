@@ -6,6 +6,8 @@ Lista de paquetes:
  */
 package ud1_extra2.logica;
 
+import ud1_extra2.logica.operaciones.TipoArchivo;
+import ud1_extra2.logica.operaciones.OperacionesArchivos;
 import java.io.File;
 import java.util.ArrayList;
 import ud1_extra2.dto.Alumno;
@@ -23,12 +25,12 @@ public class Logica {
     public static final int ERROR = -1;
     private static VentanaPrincipal vp;
     private static int matriculaMasAlta = 0;
-    private static ArrayList<Alumno> alumnos = new ArrayList<Alumno>();
-    private static OperacionesArchivo opArchivo = new OperacionesArchivo();
+    private static final ArrayList<Alumno> alumnos = new ArrayList<>();
+    private static final OperacionesArchivos opArchivo = new OperacionesArchivos();
 
     private static TipoArchivo tipoActual;
-    private static String rutaActual="";
-    private static boolean hayCambios=false;
+    private static String rutaActual = "";
+    private static boolean hayCambios = false;
 
     /**
      * @param args the command line arguments
@@ -72,12 +74,12 @@ public class Logica {
     public static void agregar(Alumno alumno) {
         alumnos.add(alumno);
         matriculaMasAlta = alumno.getMatricula();
-        hayCambios=true;
+        hayCambios = true;
     }
 
     public static void editar(Alumno alumno) {
         alumnos.set(alumnos.indexOf(alumno), alumno);
-        hayCambios=true;
+        hayCambios = true;
     }
 
     public static ArrayList<Alumno> getAlumnos() {
@@ -95,25 +97,27 @@ public class Logica {
         if (indice >= alumnos.size()) {
             return false;
         }
-        hayCambios=true;
+        hayCambios = true;
         return alumnos.remove(indice) != null;
     }
 
     public static int guardar() {
-        int resultado=CANCELADO;
-        if (tipoActual==null)
-                resultado= guardarNuevo();
-        else
-            resultado=guardarActual();
-        if (resultado==GUARDADO)
-            hayCambios=false;
+        int resultado = CANCELADO;
+        if (tipoActual == null) {
+            resultado = guardarNuevo();
+        } else {
+            resultado = guardarActual();
+        }
+        if (resultado == GUARDADO) {
+            hayCambios = false;
+        }
         return resultado;
     }
 
     private static int guardarNuevo() {
         File archivo = vp.abrirSelectorDestino("Seleccione un destino para guardar");
         if (archivo != null) {
-            if (opArchivo.exportar(archivo,alumnos)) {
+            if (opArchivo.exportar(archivo, alumnos)) {
                 setNuevoArchivo(archivo);
                 return GUARDADO;
             } else {
@@ -125,16 +129,16 @@ public class Logica {
     }
 
     private static int guardarActual() {
-        if (opArchivo.exportar(new File(rutaActual),alumnos)) {
+        if (opArchivo.exportar(new File(rutaActual), alumnos)) {
             return GUARDADO;
         } else {
             return ERROR;
         }
     }
 
-    public static int exportar(File archivo){
+    public static int exportar(File archivo) {
         if (archivo != null) {
-            if (opArchivo.exportar(archivo,alumnos)) {
+            if (opArchivo.exportar(archivo, alumnos)) {
                 return GUARDADO;
             } else {
                 return ERROR;
@@ -143,23 +147,24 @@ public class Logica {
             return CANCELADO;
         }
     }
-    
-    
+
     private static void setNuevoArchivo(File archivo) {
         tipoActual = opArchivo.getTipoArchivo(archivo);
         rutaActual = archivo.getAbsolutePath();
-         hayCambios=false;
+        hayCambios = false;
 
     }
 
     public static String getTitulo() {
-        String salida="";
-        if (rutaActual.length()==0)
-            salida="Nuevo";
-        else
-            salida=rutaActual;
-        if (hayCambios)
-            salida="* "+salida;
+        String salida;
+        if (rutaActual.length() == 0) {
+            salida = "Nuevo";
+        } else {
+            salida = rutaActual;
+        }
+        if (hayCambios) {
+            salida = "* " + salida;
+        }
         return salida;
     }
 
@@ -168,19 +173,25 @@ public class Logica {
     }
 
     public static boolean hayDatos() {
-        return alumnos!=null&&alumnos.size()>0;
+        return alumnos != null && !alumnos.isEmpty();
     }
 
     public static int importar(File archivo) {
         if (archivo != null) {
-            ArrayList<Alumno> cargados= opArchivo.importar(archivo);
-            if (cargados!=null) {
+            ArrayList<Alumno> cargados = opArchivo.importar(archivo);
+            if (cargados != null) {
                 alumnos.clear();
                 alumnos.addAll(cargados);
+                //actualizar referencia a matricula mas alta
+                if (!alumnos.isEmpty()) {
+                    matriculaMasAlta = alumnos.get(alumnos.size() - 1).getMatricula();
+                } else {
+                    matriculaMasAlta = 0;
+                }
                 setNuevoArchivo(archivo);
                 return CARGADO;
-            } 
-        }  
+            }
+        }
         return ERROR;
     }
 }

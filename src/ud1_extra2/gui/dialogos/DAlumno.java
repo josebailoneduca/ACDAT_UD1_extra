@@ -12,31 +12,37 @@ import ud1_extra2.dto.Alumno;
 import ud1_extra2.logica.Logica;
 
 /**
- *
+ * Dialogo de edicion y creacion de alumno.
+ * Se inicializa con un alumno y un modo.
+ * El modo determina si funciona para editar o para crear
  * @author Jose Javier BO
  */
 public class DAlumno extends javax.swing.JDialog {
+    //modos disponibles
     public static final int AGREGAR=0;
     public static final int EDITAR=1;
+    
+    
     Alumno alumno;
+    //Modo del dialogo
     int modo;
     /**
      * Creates new form Alumno
      */
     public DAlumno(java.awt.Frame parent, Alumno alumno, int modo) {
         super(parent, true);
-        this.alumno=alumno;
         initComponents();
         this.alumno=alumno;
         this.modo=modo;
         rellenar();
     }
 
-    
+    /**
+     * Rellena el formulario con los datos del alumno
+     */
     private void rellenar() {
         inputMatricula.setText(""+alumno.getMatricula());
         inputNombre.setText(alumno.getNombre());
-        if (alumno.getFechaNac()!=0)
         inputFecha.setValue(new Date(alumno.getFechaNac()));
         inputNota.setValue(alumno.getNota());
     }
@@ -193,10 +199,18 @@ public class DAlumno extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Cerrar el dialogo al pulsar el boton de cancelar
+     * @param evt 
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    /**
+     * Guardar nuevo o editado segun el modo al pulsar el boton de aceptar
+     * @param evt 
+     */
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
         //recoger valores
         String nombre=this.inputNombre.getText();
@@ -214,7 +228,8 @@ public class DAlumno extends javax.swing.JDialog {
         alumno.setNombre(nombre);
         alumno.setFechaNac(fecha);
         alumno.setNota(nota);
-        //salvado
+        
+        //salvar segun el modo
         if (this.modo==DAlumno.AGREGAR)
             Logica.agregar(alumno);
         else

@@ -4,10 +4,10 @@ LICENCIA JOSE JAVIER BO
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Enum.java to edit this template
 Lista de paquetes:
  */
-package ud1_extra2.logica;
+package ud1_extra2.logica.operaciones;
 
 /**
- *
+ * Tipos de archivo posibles
  * @author Jose Javier Bailon Ortiz
  */
 public enum TipoArchivo {
@@ -15,5 +15,4 @@ public enum TipoArchivo {
     BINARIO,
     OBJETO,
     ACCESO_ALEATORIO
-    
 }

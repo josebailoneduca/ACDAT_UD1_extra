@@ -154,11 +154,17 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="inputFiltro">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="inputFiltroKeyReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnQuitarFiltro">
           <Properties>
             <Property name="text" type="java.lang.String" value="X"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnQuitarFiltroActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JComboBox" name="inputSelectFiltro">
           <Properties>
@@ -169,6 +175,9 @@
               </StringArray>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inputSelectFiltroActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>

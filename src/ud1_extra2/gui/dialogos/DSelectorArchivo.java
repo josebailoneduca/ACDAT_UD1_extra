@@ -4,7 +4,6 @@ LICENCIA JOSE JAVIER BO
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
 Lista de paquetes:
  */
-
 package ud1_extra2.gui.dialogos;
 
 import java.io.File;
@@ -19,114 +18,142 @@ import ud1_extra2.gui.tablemodels.ArchivosTableModel;
 import ud1_extra2.logica.selectorarchivo.LogicaSelectorArchivo;
 
 /**
+ * Dialogo de seleccion de archivo. Se construye pasandole una ruta inicial a
+ * mostrar. Tiene un selector de extension para filtrar qué archivos se muestran
+ * Para la logica se sirve de la lase
+ * logica.selectorarchivo.LogicaSelectorArchivo
  *
+ * Al terminar se oculta el dialogo y puede consultarse de manera externa el
+ * archivo seleccionado usando el metodo getSeleccionado() teniendo un flujo de
+ * uso similar a un JFileChooser
+ *
+ * @see LogicaSelectorArchivo
  * @author Jose Javier Bailon Ortiz
  */
 public class DSelectorArchivo extends javax.swing.JDialog {
 
     File archivoSeleccionado;
-        //sorter de la tabla
+    //sorter de la tabla
     TableRowSorter<ArchivosTableModel> rowSorter;
-    
-    /** Creates new form DSelectorArchivo */
+
+    /**
+     * Creates new form DSelectorArchivo
+     */
     public DSelectorArchivo(java.awt.Frame parent, String ruta) {
         super(parent, true);
         initComponents();
         //inicializa la tabla
         inicializaTabla();
-        
+
         //poner foco en el campo de texto de ruta
         inputDirectorio.setText(ruta);
         inputDirectorio.requestFocus();
         buscar();
     }
 
-    
-        /**
+    /**
      * Inicializa la tabla estableciendo el modelo y el RowSorter
      */
     private void inicializaTabla() {
-        
+
         ArchivosTableModel tm = new ArchivosTableModel(LogicaSelectorArchivo.listaArchivos);
         tabla.setModel(tm);
-         //definir la tabla como seleccionable
+        //definir la tabla como seleccionable
         tabla.setRowSelectionAllowed(true);
-            
+
         //crear sorter
         rowSorter = new TableRowSorter<>(tm);
         tabla.setRowSorter(rowSorter);
-        
+
         //ordenacion por defecto inicial
         List<RowSorter.SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
         rowSorter.setSortKeys(sortKeys);
 
     }
-    
-    
-       /**
+
+    /**
      * Refresca el contenido de la tabla
      */
     private void actualizarTabla() {
-       ((ArchivosTableModel) tabla.getModel()).fireTableDataChanged();
+        ((ArchivosTableModel) tabla.getModel()).fireTableDataChanged();
     }
-    
-    
-    
-           /**
+
+    /**
      * Filtra la tabla segun el nombre del archivo
      */
-    private void filtrarPorNombre(){
-       int indiceFiltro = 0; //Ya que es el del nombre
-        RowFilter<ArchivosTableModel,Integer> rf = RowFilter.regexFilter(inputFiltroNombre.getText(), indiceFiltro);
+    private void filtrarPorNombre() {
+        int indiceFiltro = 0; //Ya que es el del nombre
+        RowFilter<ArchivosTableModel, Integer> rf = RowFilter.regexFilter(inputFiltroNombre.getText(), indiceFiltro);
         rowSorter.setRowFilter(rf);
     }
-    
-   
-    
-            private void msgError(String msg){
+
+    /**
+     * Lanza la busqueda de archivos en la ruta seleccionada segun la extension
+     * seleccionada
+     */
+    private void buscar() {
+        String ruta = inputDirectorio.getText();
+        //si la ruta esta vacia avisar
+        if (ruta.length() == 0) {
+            msgError("Escriba una ruta");
+        } //si la ruta no existe o no es un directorio avisar
+        else if (!LogicaSelectorArchivo.existeDirectorio(ruta)) {
+            msgError("No existe un directorio con la ruta: " + ruta);
+        } else {
+            String filtro = "";
+            switch (inputExtension.getSelectedIndex()) {
+                case 0 -> {
+                    filtro = "txt";
+                }
+                case 1 -> {
+                    filtro = "bin";
+                }
+                case 2 -> {
+                    filtro = "obj";
+                }
+                case 3 -> {
+                    filtro = "dat";
+                }
+                default -> {
+                }
+            }
+            //ordenar a la Logica buscar los archivos de la ruta y actualizar la tabla
+            LogicaSelectorArchivo.buscar(ruta, filtro);
+            actualizarTabla();
+        }
+    }
+
+    /**
+     * Muestra un mensaje de error
+     *
+     * @param msg El mensaje a mostrar
+     */
+    private void msgError(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
-        /**
+
+    /**
      * Muestra un mensaje de aviso
-     * @param msg  El mensaje
+     *
+     * @param msg El mensaje
      */
     private void msgAviso(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Aviso", JOptionPane.WARNING_MESSAGE);
     }
-    private void buscar(){
-            String ruta = inputDirectorio.getText();
-        //si la ruta esta vacia avisar
-        if (ruta.length()==0){
-            msgError("Escriba una ruta");
-        }
-        //si la ruta no existe o no es un directorio avisar
-        else if (!LogicaSelectorArchivo.existeDirectorio(ruta)){
-            msgError("No existe un directorio con la ruta: "+ruta);
-        }
-        else{
-            String filtro="";
-            switch (inputExtension.getSelectedIndex()){
-                case 0->{filtro="txt";}
-                case 1->{filtro="bin";}
-                case 2->{filtro="obj";}
-                case 3->{filtro="dat";}
-                default->{}
-            }
-            //ordenar a la Logica buscar los archivos de la ruta y actualizar la tabla
-            LogicaSelectorArchivo.buscar(ruta,filtro);
-            actualizarTabla();
-        }
-    }
-            
-    
-    public File getSeleccionado(){
+
+    /**
+     * Devuelve el archivo seleccionado
+     * @return  El archivo seleccionado
+     */
+    public File getSeleccionado() {
         return archivoSeleccionado;
     }
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -134,27 +161,27 @@ public class DSelectorArchivo extends javax.swing.JDialog {
 
         lbDirectorio = new javax.swing.JLabel();
         inputDirectorio = new javax.swing.JTextField();
-        btnDirectorio = new javax.swing.JButton();
+        btnBuscar = new javax.swing.JButton();
         lbFiltraNombre = new javax.swing.JLabel();
         inputFiltroNombre = new javax.swing.JTextField();
         btnLimpiarFiltro = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
         inputExtension = new javax.swing.JComboBox<>();
-        btnImportar = new javax.swing.JButton();
+        btnSeleccionar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         lbDirectorio.setText("Indique directorio:");
 
-        btnDirectorio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra1/gui/imagenes/buscar.png"))); // NOI18N
-        btnDirectorio.setText("Buscar");
-        btnDirectorio.setToolTipText("Mostrar todos los archivos de la ruta especificada");
-        btnDirectorio.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnDirectorio.addActionListener(new java.awt.event.ActionListener() {
+        btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra1/gui/imagenes/buscar.png"))); // NOI18N
+        btnBuscar.setText("Buscar");
+        btnBuscar.setToolTipText("Mostrar todos los archivos de la ruta especificada");
+        btnBuscar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDirectorioActionPerformed(evt);
+                btnBuscarActionPerformed(evt);
             }
         });
 
@@ -195,11 +222,11 @@ public class DSelectorArchivo extends javax.swing.JDialog {
             }
         });
 
-        btnImportar.setText("Importar");
-        btnImportar.setActionCommand("A");
-        btnImportar.addActionListener(new java.awt.event.ActionListener() {
+        btnSeleccionar.setText("Seleccionar");
+        btnSeleccionar.setActionCommand("A");
+        btnSeleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnImportarActionPerformed(evt);
+                btnSeleccionarActionPerformed(evt);
             }
         });
 
@@ -231,7 +258,7 @@ public class DSelectorArchivo extends javax.swing.JDialog {
                                 .addComponent(inputFiltroNombre)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnDirectorio, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnLimpiarFiltro)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -239,7 +266,7 @@ public class DSelectorArchivo extends javax.swing.JDialog {
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnImportar)
+                        .addComponent(btnSeleccionar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar)
                         .addGap(135, 135, 135))))
@@ -255,7 +282,7 @@ public class DSelectorArchivo extends javax.swing.JDialog {
                             .addComponent(inputDirectorio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btnDirectorio, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(inputFiltroNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -266,7 +293,7 @@ public class DSelectorArchivo extends javax.swing.JDialog {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnImportar)
+                    .addComponent(btnSeleccionar)
                     .addComponent(btnCancelar))
                 .addGap(20, 20, 20))
         );
@@ -274,49 +301,78 @@ public class DSelectorArchivo extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDirectorioActionPerformed
+    /**
+     * Pulsacion del boton buscar inicia la busqueda
+     * @param evt 
+     */
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         buscar();
-    }//GEN-LAST:event_btnDirectorioActionPerformed
+    }//GEN-LAST:event_btnBuscarActionPerformed
 
+    /**
+     * Listener de la pulsacion de tecla en el campo de filtro. Actualiza el filtrado de la tabla
+     * @param evt 
+     */
     private void inputFiltroNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputFiltroNombreKeyReleased
         //activar el filtro de nombre
         filtrarPorNombre();
     }//GEN-LAST:event_inputFiltroNombreKeyReleased
 
+    /**
+     * Limpia el campo de filtro y actualiza el filtrado de la tabla
+     * @param evt 
+     */
     private void btnLimpiarFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarFiltroActionPerformed
         //limpiar el filtro de nombre
         inputFiltroNombre.setText("");
         filtrarPorNombre();
     }//GEN-LAST:event_btnLimpiarFiltroActionPerformed
 
+    /**
+     * Cierra la ventana al pulsar cancelar
+     * @param evt 
+     */
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void btnImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarActionPerformed
-        
+    /**
+     * Evento de la pulsasacion de aceptar.
+     * Comprueba que se ha seleccionado alguna fila y guarda el seleccionado
+     * como archivo seleccionado para poder ser consultado posteriormente con el 
+     * metodo getSeleccionado
+     * 
+     * @see DSelectorArchivo#getSeleccionado()
+     * @param evt 
+     */
+    private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
+        //comprobar seleccion
         int seleccionado = tabla.getSelectedRow();
         if (seleccionado < 0) {
             msgAviso("Seleccione un archivo");
             return;
         }
         //extraer indice de alumno en el array
-        int indice= tabla.convertRowIndexToModel(seleccionado);
+        int indice = tabla.convertRowIndexToModel(seleccionado);
         this.archivoSeleccionado = new File(LogicaSelectorArchivo.getArchivo(indice).getRuta());
         this.setVisible(false);
-    }//GEN-LAST:event_btnImportarActionPerformed
+    }//GEN-LAST:event_btnSeleccionarActionPerformed
 
+    /**
+     * Evento de escucha de cambio de extensin seleccionada.
+     * Al cambiar de extensión se relanza la busqueda-
+     * @param evt 
+     */
     private void inputExtensionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputExtensionActionPerformed
         buscar();
     }//GEN-LAST:event_inputExtensionActionPerformed
 
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnDirectorio;
-    private javax.swing.JButton btnImportar;
     private javax.swing.JButton btnLimpiarFiltro;
+    private javax.swing.JButton btnSeleccionar;
     private javax.swing.JTextField inputDirectorio;
     private javax.swing.JComboBox<String> inputExtension;
     private javax.swing.JTextField inputFiltroNombre;

@@ -21,7 +21,7 @@ public class LogicaSelectorArchivo {
     //ATRIBUTOS
 
     //lista de archivos encontrados
-    public static ArrayList<Archivo> listaArchivos = new ArrayList<Archivo>();
+    public static ArrayList<Archivo> listaArchivos = new ArrayList<>();
 
 
     /**
