@@ -23,8 +23,10 @@ import ud1_extra2.gui.tablemodels.AlumnosTableModel;
 import ud1_extra2.logica.Logica;
 
 /**
- * Ventana principal de la aplicación
- *
+ * Ventana principal de la aplicación.
+ * La logica de negocio para las acciones de esta ventana esta en logica.Logica
+ * 
+ * @see Logica
  * @author Jose Javier BO
  */
 public class VentanaPrincipal extends javax.swing.JFrame {

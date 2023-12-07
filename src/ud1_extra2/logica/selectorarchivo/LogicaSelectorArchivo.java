@@ -11,10 +11,9 @@ import java.util.ArrayList;
 import ud1_extra2.dto.Archivo;
 
 /**
- * Logica del ejercicio UD1_EXTRA1
+ * Logica del dialogo de seleccion de archivos del ejercicio UD1_EXTRA2
  *
- * Hace las busquedas en disco
- *
+ * @see ud1_extra2.gui.dialogos.DSelectorArchivo
  * @author Jose Javier BO
  */
 public class LogicaSelectorArchivo {
@@ -58,13 +57,18 @@ public class LogicaSelectorArchivo {
         }
     }
 
-    private static void agregaArchivoAlResultado(File file) {
-        String nombreCompleto = file.getName();
+    /**
+     * Agrega un DTO archivo a la lista de archivos encontrados
+     * 
+     * @param archivo Archivo a agregar
+     */
+    private static void agregaArchivoAlResultado(File archivo) {
+        String nombreCompleto = archivo.getName();
         String extension = "";
         String nombre = nombreCompleto;
-        long tamano = file.length();
+        long tamano = archivo.length();
         //si es directorio calcular extension y nombre
-        boolean esDirectorio = file.isDirectory();
+        boolean esDirectorio = archivo.isDirectory();
         if (!esDirectorio) {
             //diivision nombre.extension
             int puntoExtension = nombreCompleto.lastIndexOf(".");
@@ -75,11 +79,16 @@ public class LogicaSelectorArchivo {
             }
         }
         //generar DTO y agregar a la lista
-        Archivo arch = new Archivo(nombre, extension, tamano, esDirectorio, file.getAbsolutePath());
+        Archivo arch = new Archivo(nombre, extension, tamano, esDirectorio, archivo.getAbsolutePath());
         listaArchivos.add(arch);
     }
  
+    /**
+     * Devuelve un archivo segun el indice para la lista de archivos encontrados
+     * @param indice El indice
+     * @return  El archivo en el indice buscado
+     */
     public static Archivo getArchivo(int indice){
-    return listaArchivos.get(indice);
+        return listaArchivos.get(indice);
     }
 }

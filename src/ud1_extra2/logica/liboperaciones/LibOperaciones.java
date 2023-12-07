@@ -4,29 +4,46 @@ LICENCIA JOSE JAVIER BO
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
 Lista de paquetes:
  */
-package ud1_extra2.logica.operaciones;
+package ud1_extra2.logica.liboperaciones;
 
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import ud1_extra2.dto.Alumno;
-import static ud1_extra2.logica.operaciones.TipoArchivo.ACCESO_ALEATORIO;
-import static ud1_extra2.logica.operaciones.TipoArchivo.BINARIO;
-import static ud1_extra2.logica.operaciones.TipoArchivo.OBJETO;
-import static ud1_extra2.logica.operaciones.TipoArchivo.TEXTO;
+import static ud1_extra2.logica.liboperaciones.TipoArchivo.ACCESO_ALEATORIO;
+import static ud1_extra2.logica.liboperaciones.TipoArchivo.BINARIO;
+import static ud1_extra2.logica.liboperaciones.TipoArchivo.OBJETO;
+import static ud1_extra2.logica.liboperaciones.TipoArchivo.TEXTO;
 
 /**
- * Clase de funciones de acceso y lectura desde disco
- *
+ * Clase de funciones de acceso y lectura desde disco.
+ * Se sirve de clases que implementan la interfaz IOArchivoInterface
+ * para guardar y leer de disco en diferentes formatos
+ * 
+ * @see IOArchivoInterface
+ * @see IOTexto
+ * @see IOBinario
+ * @see IOObjeto
+ * @see IOAccesoAleatorio
+ * 
  * @author Jose Javier BO
  */
-public class OperacionesArchivos {
+public class LibOperaciones {
 
+    //implementaciones de IOArchivoInteface para leer y escribir
+    //cada uno de los tipos de archivo
     IOArchivoInterface iotexto = new IOTexto();
     IOArchivoInterface iobinario = new IOBinario();
     IOArchivoInterface ioobjeto = new IOObjeto();
     IOArchivoInterface ioaleatorio=new IOAccesoAleatorio();
 
+    /**
+     * Exporta lo alumnos a un archivo. Identifica el tipo de archivo por la
+     * extension del archivo y usa la clase apropiada para realizar la operacion
+     * @param archivo El archivo a usar
+     * @param alumnos El listado de usuarios
+     * @return  True si se ha exportado. False si no se ha exportado
+     */
     public boolean exportar(File archivo, ArrayList<Alumno> alumnos) {
         TipoArchivo tipo = getTipoArchivo(archivo);
         if (tipo == null) {
@@ -41,6 +58,12 @@ public class OperacionesArchivos {
         }
     }
 
+     /**
+     * importa lo alumnos desde un archivo. Identifica el tipo de archivo por la
+     * extension del archivo y usa la clase apropiada para realizar la operacion
+     * @param archivo El archivo a usar
+     * @return  El listado de alumnos si ha podido leer el archivoi o null si no ha podido
+     */
     public ArrayList<Alumno> importar(File archivo) {
         TipoArchivo tipo = getTipoArchivo(archivo);
         if (tipo == null) {
@@ -55,6 +78,12 @@ public class OperacionesArchivos {
         }
     }
 
+    
+    /**
+     * Devuelve el tipo de archivo en funcion de su extension.
+     * @param archivo El archivo
+     * @return El tipo de archivo detectado
+     */
     public TipoArchivo getTipoArchivo(File archivo) {
         FileNameExtensionFilter tf = new FileNameExtensionFilter("Texto", "txt");
         if (tf.accept(archivo)) {
