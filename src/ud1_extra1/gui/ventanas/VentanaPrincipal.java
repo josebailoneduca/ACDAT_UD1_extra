@@ -17,15 +17,15 @@ import ud1_extra1.gui.tablemodels.ArchivosTableModel;
 import ud1_extra1.logica.Logica;
 
 /**
+ * Ventana principal
  *
  * @author Jose Javier BO
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
 
-    
-        //sorter de la tabla
+    //sorter de la tabla
     TableRowSorter<ArchivosTableModel> rowSorter;
-    
+
     /**
      * Creates new form NewJFrame
      */
@@ -41,22 +41,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
      * Inicializa la tabla estableciendo el modelo y el RowSorter
      */
     private void inicializaTabla() {
-        
+
         ArchivosTableModel tm = new ArchivosTableModel(Logica.listaArchivos);
         tabla.setModel(tm);
-         //definir la tabla como seleccionable
+        //definir la tabla como seleccionable
         tabla.setRowSelectionAllowed(false);
-            
+
         //crear sorter
         rowSorter = new TableRowSorter<>(tm);
         tabla.setRowSorter(rowSorter);
-        
+
         //ordenacion por defecto inicial
         List<RowSorter.SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
         rowSorter.setSortKeys(sortKeys);
 
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -85,7 +86,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         btnDirectorio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ud1_extra1/gui/imagenes/buscar.png"))); // NOI18N
         btnDirectorio.setText("Buscar todo");
         btnDirectorio.setToolTipText("Mostrar todos los archivos de la ruta especificada");
-        btnDirectorio.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnDirectorio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDirectorioActionPerformed(evt);
@@ -161,7 +161,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                                 .addComponent(btnLimpiarFiltro)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,17 +195,20 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Evento del boton de buscar todo
+     *
+     * @param evt
+     */
     private void btnDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDirectorioActionPerformed
         String ruta = inputDirectorio.getText();
         //si la ruta esta vacia avisar
-        if (ruta.length()==0){
+        if (ruta.length() == 0) {
             msgError("Escriba una ruta");
-        }
-        //si la ruta no existe o no es un directorio avisar
-        else if (!Logica.existeDirectorio(ruta)){
-            msgError("No existe un directorio con la ruta: "+ruta);
-        }
-        else{
+        } //si la ruta no existe o no es un directorio avisar
+        else if (!Logica.existeDirectorio(ruta)) {
+            msgError("No existe un directorio con la ruta: " + ruta);
+        } else {
             //ordenar a la Logica buscar los archivos de la ruta y actualizar la tabla
             Logica.buscarSinFiltro(ruta);
             actualizarTabla();
@@ -213,90 +216,75 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnDirectorioActionPerformed
 
+    /**
+     * Evento del boton de buscar con extension
+     *
+     * @param evt
+     */
     private void btnExtensionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExtensionActionPerformed
         String ruta = inputDirectorio.getText();
         String extension = inputExtension.getText();
         //si la ruta esta vacia avisar
-        if (ruta.length()==0){
+        if (ruta.length() == 0) {
             msgError("Escriba una ruta");
 
             //si la extension esta vacia avisar
-        }else if(extension.length()==0){
+        } else if (extension.length() == 0) {
             msgError("Escriba una extension");
-        }else if (!Logica.existeDirectorio(ruta)){
+        } else if (!Logica.existeDirectorio(ruta)) {
             //si el directorio no existe avisar
-            msgError("No existe un directorio con la ruta: "+ruta);
-        }else{
+            msgError("No existe un directorio con la ruta: " + ruta);
+        } else {
             //ordenar a la logica buscar con el filtro de extension y actualizar la tabla
             Logica.buscarConFiltro(ruta, extension);
             actualizarTabla();
         }
     }//GEN-LAST:event_btnExtensionActionPerformed
 
-       /**
+    /**
      * Refresca el contenido de la tabla
      */
     private void actualizarTabla() {
-       ((ArchivosTableModel) tabla.getModel()).fireTableDataChanged();
+        ((ArchivosTableModel) tabla.getModel()).fireTableDataChanged();
     }
-        private void msgError(String msg){
+
+    /**
+     * Muestra un mensaje de error
+     * @param msg  El mensaje a mostrar
+     */
+    private void msgError(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
-    
+
+    /**
+     * Evento de escribir en el filtro por nombre
+     * @param evt 
+     */
     private void inputFiltroNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputFiltroNombreKeyReleased
         //activar el filtro de nombre
         filtrarPorNombre();
     }//GEN-LAST:event_inputFiltroNombreKeyReleased
-   /**
+ 
+    /**
      * Filtra la tabla segun el nombre del archivo
      */
-    private void filtrarPorNombre(){
-       int indiceFiltro = 0; //Ya que es el del nombre
-        RowFilter<ArchivosTableModel,Integer> rf = RowFilter.regexFilter(inputFiltroNombre.getText(), indiceFiltro);
+    private void filtrarPorNombre() {
+        int indiceFiltro = 0; //Ya que es el del nombre
+        RowFilter<ArchivosTableModel, Integer> rf = RowFilter.regexFilter(inputFiltroNombre.getText(), indiceFiltro);
         rowSorter.setRowFilter(rf);
 
     }
+    
+    /**
+     * Boton de limpiar el filtro por nombre
+     * @param evt 
+     */
     private void btnLimpiarFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarFiltroActionPerformed
         //limpiar el filtro de nombre
         inputFiltroNombre.setText("");
         filtrarPorNombre();
     }//GEN-LAST:event_btnLimpiarFiltroActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VentanaPrincipal().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDirectorio;

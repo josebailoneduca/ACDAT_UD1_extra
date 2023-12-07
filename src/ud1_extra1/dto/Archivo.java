@@ -7,7 +7,7 @@ Lista de paquetes:
 package ud1_extra1.dto;
 
 /**
- *
+ * DTO para archivos
  * @author Jose Javier BO
  */
 public class Archivo {
